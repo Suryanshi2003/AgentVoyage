@@ -1,5 +1,5 @@
 // environment.ts
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:8000/api/travel'
+    apiUrl: 'https://agentvoyage-i0ga.onrender.com'
 };
