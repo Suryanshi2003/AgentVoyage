@@ -20,7 +20,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:4200",
-        "https://agentvoyage-i0ga.onrender.com"
+        "https://agentvoyage-to09.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
