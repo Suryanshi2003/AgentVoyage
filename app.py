@@ -19,7 +19,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://agentvoyage-i0ga.onrender.com",
+        "http://localhost:4200",
+        "https://agentvoyage-i0ga.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],

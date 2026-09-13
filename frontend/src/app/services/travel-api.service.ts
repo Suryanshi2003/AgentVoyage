@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { PlanRequest, PlanResponse, RawTravelResponse } from '../models/trip.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TravelApiService {
   /** Matches the POST /api/travel route in app.py */
-  private readonly apiUrl = 'http://localhost:8000/api/travel';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
