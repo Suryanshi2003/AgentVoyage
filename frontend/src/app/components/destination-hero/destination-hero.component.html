@@ -1,0 +1,21 @@
+<section class="dest-hero" [class.dest-hero--photo]="image()?.imageUrl">
+  @if (image()?.imageUrl) {
+    <img class="dest-hero-img" [src]="image()!.imageUrl!" [alt]="place()" />
+    <div class="dest-hero-scrim"></div>
+  }
+
+  <div class="dest-hero-content">
+    <span class="dest-hero-eyebrow">Destination</span>
+    <h2 class="dest-hero-title">{{ place() }}</h2>
+
+    @if (image()?.extract) {
+      <p class="dest-hero-extract">{{ image()!.extract }}</p>
+    }
+
+    @if (image()?.pageUrl) {
+      <a class="dest-hero-source" [href]="image()!.pageUrl!" target="_blank" rel="noopener">
+        Read more on Wikipedia
+      </a>
+    }
+  </div>
+</section>

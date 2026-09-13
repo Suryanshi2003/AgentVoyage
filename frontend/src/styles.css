@@ -1,0 +1,72 @@
+/* =========================================================
+   AgentVoyage — design tokens
+   Concept: a night departure board crossed with a paper
+   boarding pass. The agents are "gates"; the itinerary is
+   the ticket you're handed once they're done.
+   ========================================================= */
+
+:root {
+  /* Color */
+  --color-dusk: #0b1b2b;      /* night-sky navy — app background */
+  --color-panel: #12283b;     /* departure-board housing */
+  --color-panel-line: #24445f;/* hairlines on dark panels */
+  --color-amber: #f2a65a;     /* flap-board glow, primary accent */
+  --color-coral: #e4572e;     /* route lines, active state */
+  --color-teal: #5fc1c9;      /* secondary accent, links */
+  --color-paper: #f7efde;     /* boarding-pass paper */
+  --color-paper-dim: #ece0c8; /* stub / perforation area */
+  --color-ink: #17242e;       /* text on paper */
+  --color-ink-soft: #4a5a66;  /* secondary text on paper */
+
+  /* Type */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-read: 'Lora', Georgia, serif;
+
+  /* Layout */
+  --content-width: 880px;
+  --radius-sm: 6px;
+  --radius-md: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-dusk);
+  color: var(--color-paper);
+  font-family: var(--font-display);
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(95, 193, 201, 0.10), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(242, 166, 90, 0.10), transparent 40%);
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

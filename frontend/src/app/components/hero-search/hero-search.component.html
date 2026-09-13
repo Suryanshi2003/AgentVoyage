@@ -1,0 +1,37 @@
+<section class="hero">
+  <p class="hero-eyebrow">AgentVoyage</p>
+  <h1 class="hero-title">Tell the agents where you're headed.</h1>
+  <p class="hero-sub">
+    One crew, four gates: a flight agent, a hotel agent, an itinerary
+    agent and a final agent hand your trip off to each other in turn.
+  </p>
+
+  <form class="ticket-form" (ngSubmit)="onSubmit()">
+    <div class="ticket-form-field">
+      <label for="query">Trip request</label>
+      <textarea
+        id="query"
+        name="query"
+        rows="2"
+        placeholder="e.g. 5 days in Kyoto, mid-March, mid-range budget, love ramen and temples"
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)"
+        (keydown.enter)="$event.preventDefault(); onSubmit()"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="board-button" [disabled]="loading() || !query().trim()">
+      <span>{{ loading() ? 'Boarding in progress' : 'Plan my trip' }}</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+        <path d="M2 12l19-9-7 9 7 9-19-9z" fill="currentColor" />
+      </svg>
+    </button>
+  </form>
+
+  <div class="examples">
+    <span>Try:</span>
+    @for (example of examples; track example) {
+      <button type="button" class="example-chip" (click)="useExample(example)">{{ example }}</button>
+    }
+  </div>
+</section>

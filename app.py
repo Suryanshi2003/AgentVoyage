@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from backend import run_travel_agent
 
 app = FastAPI(
-    title="TripMate AI",
+    title="TripVoyage",
     description="LangGraph Multi-Agent Travel Planner API",
     version="1.0.0"
 )

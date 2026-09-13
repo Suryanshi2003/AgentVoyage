@@ -1,0 +1,95 @@
+<div class="results">
+  <div class="plan-header">
+    <div>
+      <h2 class="plan-title">Your AI Travel Plan</h2>
+      <span class="plan-thread">Thread ID: {{ result().thread_id }}</span>
+    </div>
+    <div class="plan-actions">
+      <button type="button" class="plan-action" (click)="copyPlan()">
+        <app-icon name="copy" />
+        {{ copied() ? 'Copied!' : 'Copy' }}
+      </button>
+      <button type="button" class="plan-action plan-action--primary" (click)="downloadPdf()">
+        <app-icon name="download" />
+        Download PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="stub-row">
+    @for (tab of tabs; track tab.key) {
+      <button
+        type="button"
+        class="stub"
+        [class.stub--active]="activeTab() === tab.key"
+        (click)="setTab(tab.key)"
+      >
+        <span class="stub-gate">{{ tab.gate }}</span>
+        <span class="stub-label">{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+
+  <article class="ticket">
+    <header class="ticket-header">
+      <span class="ticket-eyebrow">Gate {{ activeTabInfo().gate }} · {{ activeTabInfo().label }}</span>
+    </header>
+
+    <div class="ticket-perforation" aria-hidden="true"></div>
+
+    @if (providerNote(); as note) {
+      <p class="provider-note">
+        <app-icon name="info" />
+        <span>{{ note }}</span>
+      </p>
+    }
+
+    <!-- Summary tab: icon-labeled cards, each rendered as real markdown -->
+    @if (activeTab() === 'summary') {
+      @if (summarySections(); as sections) {
+        <div class="section-grid">
+          @for (section of sections; track section.key) {
+            <div class="info-card">
+              <div class="info-card-head">
+                <app-icon [name]="section.icon" />
+                <h3>{{ section.title }}</h3>
+              </div>
+              <div class="prose" [innerHTML]="section.body | markdown"></div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="prose" [innerHTML]="fallbackBody() | markdown"></div>
+      }
+    }
+
+    <!-- Itinerary tab: a day-by-day timeline, each day rendered as real markdown -->
+    @if (activeTab() === 'itinerary') {
+      @if (itineraryDays(); as days) {
+        <div class="timeline">
+          @for (day of days; track day.label; let i = $index) {
+            <div class="timeline-row">
+              <div class="timeline-marker">
+                <span class="timeline-dot">{{ i + 1 }}</span>
+                @if (i < days.length - 1) {
+                  <span class="timeline-line"></span>
+                }
+              </div>
+              <div class="timeline-content">
+                <h3>{{ day.label }}</h3>
+                <div class="prose" [innerHTML]="day.body | markdown"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="prose" [innerHTML]="fallbackBody() | markdown"></div>
+      }
+    }
+
+    <!-- Flights / Hotels tabs: rendered as real markdown (tables, bold, lists all preserved) -->
+    @if (activeTab() === 'flights' || activeTab() === 'hotels') {
+      <div class="prose" [innerHTML]="fallbackBody() | markdown"></div>
+    }
+  </article>
+</div>

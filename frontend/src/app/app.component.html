@@ -1,0 +1,30 @@
+<div class="app-shell">
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark">✈</span>
+      <span class="brand-name">AgentVoyage</span>
+    </div>
+  </header>
+
+  <app-hero-search [loading]="loading()" (submitQuery)="onSearch($event)" />
+
+  @if (loading() || result()) {
+    <app-destination-hero [query]="lastQuery()" [answer]="result()?.answer ?? null" />
+
+    <section class="board-section">
+      <app-agent-board [stages]="stages()" />
+    </section>
+  }
+
+  @if (error(); as message) {
+    <p class="error-banner">{{ message }}</p>
+  }
+
+  @if (result(); as res) {
+    <app-result-tickets [result]="res" />
+  }
+
+  <footer class="site-footer">
+    <span>Flight &amp; stay data fetched by the flight and hotel agents · itinerary drafted by an LLM crew</span>
+  </footer>
+</div>

@@ -1,0 +1,117 @@
+.board {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-line);
+  border-radius: var(--radius-md);
+  padding: 1.4rem 1.6rem 1.6rem;
+  font-family: var(--font-mono);
+}
+
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: #8ea1af;
+  margin-bottom: 1rem;
+}
+
+.board-header-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-amber);
+  box-shadow: 0 0 8px 2px rgba(242, 166, 90, 0.6);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+.board-columns {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 8rem;
+  gap: 0.6rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: #5a7182;
+  padding: 0 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--color-panel-line);
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 8rem;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.65rem 0.6rem;
+  border-bottom: 1px dashed var(--color-panel-line);
+}
+
+.board-row:last-child {
+  border-bottom: none;
+}
+
+.flap {
+  background: #0e1e2c;
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  color: #dbe6ec;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.flap--code {
+  color: var(--color-teal);
+  font-weight: 600;
+}
+
+.flap--name {
+  text-align: left;
+  background: transparent;
+  color: #d3dee5;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  padding-left: 0.2rem;
+}
+
+.flap--status {
+  color: #6c7f8c;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.flap--status.status-active {
+  color: var(--color-dusk);
+  background: var(--color-amber);
+  animation: flip-in 0.35s ease;
+}
+
+.flap--status.status-done {
+  color: var(--color-dusk);
+  background: var(--color-teal);
+  animation: flip-in 0.35s ease;
+}
+
+@keyframes flip-in {
+  0% {
+    transform: rotateX(90deg);
+    opacity: 0.3;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 560px) {
+  .board-columns,
+  .board-row {
+    grid-template-columns: 2.6rem 1fr 6rem;
+    font-size: 0.78rem;
+  }
+}

@@ -1,0 +1,26 @@
+<div class="board" role="status" aria-live="polite">
+  <div class="board-header">
+    <span>AGENT DEPARTURES</span>
+    <span class="board-header-dot" aria-hidden="true"></span>
+  </div>
+
+  <div class="board-columns">
+    <span>GATE</span>
+    <span>AGENT</span>
+    <span>STATUS</span>
+  </div>
+
+  @for (stage of stages(); track stage.code) {
+    <div class="board-row">
+      <span class="flap flap--code">{{ stage.code }}</span>
+      <span class="flap flap--name">{{ stage.name }}</span>
+      <span
+        class="flap flap--status"
+        [class.status-active]="stage.status === 'active'"
+        [class.status-done]="stage.status === 'done'"
+      >
+        {{ statusLabel(stage.status) }}
+      </span>
+    </div>
+  }
+</div>

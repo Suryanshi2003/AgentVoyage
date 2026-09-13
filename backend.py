@@ -94,16 +94,54 @@ def flight_agent(state: TravelState):
 
 def hotel_agent(state: TravelState):
     query = f"Best hotels for {state['user_query']}"
-    hotel_results = tavily_search(query)
+    raw_hotel_data = tavily_search(query)
+
+    # tavily_search() returns raw scraped web content - broken markdown,
+    # image alt-text placeholders, bare URLs, half-formed tables. Never
+    # show that to a user. Pass it through the LLM once to turn it into
+    # a short, clean list before it goes anywhere near the frontend.
+    cleanup_prompt = f"""
+You are cleaning up messy raw web search results about hotels so they can
+be shown directly to a traveler.
+
+Traveler's request:
+{state['user_query']}
+
+Raw search results:
+{raw_hotel_data}
+
+Turn this into 3-5 hotel suggestions that actually fit the traveler's request
+above (destination, dates, budget level). Skip any hotel in the raw results
+that clearly doesn't match. For each hotel, include:
+- Hotel name
+- Area / neighborhood
+- Approximate price per night, if it's mentioned
+- A booking link, if one appears in the raw results for that hotel (format
+  it as a markdown link, e.g. [Book here](https://...); write "Link not
+  available" if there truly isn't one)
+- 2-3 short highlights (amenities, room type, standout feature)
+- One line on who it best suits (e.g. "Good for couples", "Best for budget travelers")
+
+Formatting rules:
+- Plain markdown bullet list, one hotel per bullet, nothing else before or after it.
+- No image placeholders (like "accommodation_icon") or broken tables.
+- No mention of where the data came from (no "according to", no source names).
+- If a hotel's price isn't mentioned, write "Price not listed" instead of guessing.
+- Keep the whole thing under 250 words.
+"""
+
+    response = llm.invoke([
+        SystemMessage(content="You turn messy scraped web search results into a short, clean hotel list that matches what the traveler actually asked for."),
+        HumanMessage(content=cleanup_prompt)
+    ])
 
     return {
-        "hotel_results": hotel_results,
+        "hotel_results": response.content,
         "messages": [
             AIMessage(content="Hotel information fetched.")
         ],
         "llm_calls": state.get("llm_calls", 0) + 1
     }
-
 
 
 
@@ -113,7 +151,7 @@ def hotel_agent(state: TravelState):
 
 def itinerary_agent(state: TravelState):
     prompt = f"""
-Create a complete travel itinerary.
+Create a complete travel itinerary based on the details below.
 
 User Query:
 {state['user_query']}
@@ -124,11 +162,19 @@ Flight Results:
 Hotel Results:
 {state['hotel_results']}
 
-Make the itinerary practical, budget-aware, and easy to follow.
+Formatting rules:
+- For each day, use exactly three blocks: Morning, Afternoon, Evening.
+- Do NOT write an hour-by-hour schedule (no "9:00 AM", "9:30 AM", etc.) — that's
+  overwhelming to read. One or two short lines per block is enough (e.g.
+  "Morning: Visit Fushimi Inari, arrive early to beat crowds").
+- Make sure the plan actually matches what the user asked for — the right
+  destination, number of days, budget level, and interests. Don't add
+  activities that don't fit the stated budget or trip length.
+- Keep it practical and easy to scan, not exhaustive.
 """
 
     response = llm.invoke([
-        SystemMessage(content="You are an expert travel planner."),
+        SystemMessage(content="You are an expert travel planner who writes short, scannable itineraries grouped into Morning/Afternoon/Evening blocks — never hour-by-hour schedules."),
         HumanMessage(content=prompt)
     ])
 
@@ -160,23 +206,44 @@ Hotels:
 Itinerary:
 {state['itinerary']}
 
-Format the final answer beautifully using these sections:
+Format the final answer using these sections:
 
 1. Trip Summary
+   Start with one line exactly like this: **Destination:** <city, country>
+   Then 2-3 short sentences: dates, purpose, and overall budget level.
+
 2. Flight Information
+   Keep whatever is in the flight results above — don't re-invent or rewrite it.
+
 3. Hotel Suggestions
+   Keep whatever is in the hotel results above — don't re-invent or rewrite it.
+
 4. Day-by-Day Itinerary
+   Keep the Morning/Afternoon/Evening structure from the itinerary above.
+   Do not turn it back into an hour-by-hour schedule.
+
 5. Estimated Budget
+   Give a short markdown table with one row per category: Flights, Hotel
+   (total for all nights), Meals, Local Transport, Activities/Entry Fees,
+   and a final Total row that is the actual sum of the rows above it. Base
+   the numbers on the flight/hotel data above and the budget level the
+   user asked for. Add one short sentence after the table at most.
+
 6. Final Recommendations
+   2-3 short, specific tips for this exact trip. No generic filler
+   ("pack comfortable shoes") unless it's genuinely relevant here.
 
 Important:
-- Be clear and practical.
-- Mention that live flight API may not provide ticket prices if pricing is unavailable.
-- Keep the response useful for real travel planning.
+- Every section must reflect what the user actually asked for — the right
+  destination, dates, duration, budget tier, and interests. If the query
+  mentioned something (e.g. a specific interest, a day trip, a traveler
+  count) that isn't addressed above, make sure it's covered here.
+- Be concise throughout — this is a summary the traveler will scan, not an essay.
+- Do not mention APIs, data providers, or where information came from.
 """
 
     response = llm.invoke([
-        SystemMessage(content="You are a professional AI travel booking assistant."),
+        SystemMessage(content="You are a professional AI travel booking assistant. You write concise, accurate, well-organized travel plans - never bloated or repetitive."),
         HumanMessage(content=final_prompt)
     ])
 
